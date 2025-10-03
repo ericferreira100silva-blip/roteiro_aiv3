@@ -139,7 +139,8 @@ const SceneBox: React.FC<SceneBoxProps> = ({
 // --- Componente Principal ---
 const App: React.FC = () => {
   const [scenes, setScenes] = useState<Scene[]>([]);
-  const [counter, setCounter] = useState<number>(0);
+  const [counter, setCounter] = useState<number>(1);
+  const [activeTab, setActiveTab] = useState<'full' | 'scenes' | 'dialogues'>('full');
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const activeSceneRef = useRef<string | null>(null);
   const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -300,6 +301,33 @@ const App: React.FC = () => {
       .join('');
   };
 
+  const formatScenesOnly = () => {
+    return scenes
+      .map((scene, index) => {
+        if (scene.content.trim()) return `${index + 1} - ${scene.content.trim()}`;
+        return `${index + 1}`;
+      })
+      .join('\n\n');
+  };
+
+  const formatDialoguesOnly = () => {
+    return scenes
+      .map((scene, index) => {
+        let script = '';
+        if (scene.dialogues.length > 0) {
+          script += `${index + 1}\n`;
+          scene.dialogues.forEach((d) => {
+            if (d.character.trim()) script += `${d.character.trim().toUpperCase()}\n`;
+            if (d.line.trim()) script += `- ${d.line.trim()}\n`;
+          });
+          script += '\n';
+        }
+        return script;
+      })
+      .filter(s => s.trim())
+      .join('');
+  };
+
   // Atualiza cenas a partir do texto editado no roteiro final
   const handleFullScriptChange = (text: string) => {
     const lines = text.split('\n');
@@ -334,7 +362,7 @@ const App: React.FC = () => {
 
   const handleCounterMouseDown = () => {
     holdTimerRef.current = setTimeout(() => {
-      setCounter(0);
+      setCounter(1);
     }, 3000);
   };
 
@@ -342,6 +370,8 @@ const App: React.FC = () => {
     if (holdTimerRef.current) {
       clearTimeout(holdTimerRef.current);
       holdTimerRef.current = null;
+    } else {
+      setCounter(1);
     }
   };
 
@@ -355,6 +385,29 @@ const App: React.FC = () => {
 
   return (
     <div className="app-layout">
+      <div className="left-panel">
+        <div className="panel-content">
+          <h2>Information</h2>
+          <div className="info-section">
+            <p>Total Scenes: <strong>{scenes.length}</strong></p>
+            <p>Total Dialogues: <strong>{scenes.reduce((sum, scene) => sum + scene.dialogues.length, 0)}</strong></p>
+          </div>
+
+          <div className="counter-section">
+            <h3>Counter</h3>
+            <button
+              className="counter-button"
+              onClick={handleCounterClick}
+              onMouseDown={handleCounterMouseDown}
+              onMouseUp={handleCounterMouseUp}
+              onMouseLeave={handleCounterMouseUp}
+            >
+              <div className="counter-display">{counter}</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="app-container">
         <h1>Roteiro</h1>
 
@@ -380,43 +433,73 @@ const App: React.FC = () => {
 
       {scenes.length > 0 && (
         <div className="full-script-container">
-          <h2>Roteiro Final</h2>
-          <textarea
-            className="full-script-textarea"
-            value={formatScenesForExport()}
-            rows={20}
-            onChange={(e) => handleFullScriptChange(e.target.value)}
-          />
-          <button className="copy-button" onClick={() => navigator.clipboard.writeText(formatScenesForExport())}>
-            Copiar
-          </button>
+          <div className="script-header">
+            <h2>Roteiro Final</h2>
+            <div className="script-tabs">
+              <button
+                className={`tab-button ${activeTab === 'full' ? 'active' : ''}`}
+                onClick={() => setActiveTab('full')}
+              >
+                Completo
+              </button>
+              <button
+                className={`tab-button ${activeTab === 'scenes' ? 'active' : ''}`}
+                onClick={() => setActiveTab('scenes')}
+              >
+                Apenas Cenas
+              </button>
+              <button
+                className={`tab-button ${activeTab === 'dialogues' ? 'active' : ''}`}
+                onClick={() => setActiveTab('dialogues')}
+              >
+                Apenas Falas
+              </button>
+            </div>
+          </div>
+
+          {activeTab === 'full' && (
+            <>
+              <textarea
+                className="full-script-textarea"
+                value={formatScenesForExport()}
+                rows={20}
+                onChange={(e) => handleFullScriptChange(e.target.value)}
+              />
+              <button className="copy-button" onClick={() => navigator.clipboard.writeText(formatScenesForExport())}>
+                Copiar
+              </button>
+            </>
+          )}
+
+          {activeTab === 'scenes' && (
+            <>
+              <textarea
+                className="full-script-textarea"
+                value={formatScenesOnly()}
+                rows={20}
+                readOnly
+              />
+              <button className="copy-button" onClick={() => navigator.clipboard.writeText(formatScenesOnly())}>
+                Copiar
+              </button>
+            </>
+          )}
+
+          {activeTab === 'dialogues' && (
+            <>
+              <textarea
+                className="full-script-textarea"
+                value={formatDialoguesOnly()}
+                rows={20}
+                readOnly
+              />
+              <button className="copy-button" onClick={() => navigator.clipboard.writeText(formatDialoguesOnly())}>
+                Copiar
+              </button>
+            </>
+          )}
         </div>
       )}
-      </div>
-
-      <div className="right-panel">
-        <div className="panel-content">
-          <h2>Information</h2>
-          <div className="info-section">
-            <p>Total Scenes: <strong>{scenes.length}</strong></p>
-            <p>Total Dialogues: <strong>{scenes.reduce((sum, scene) => sum + scene.dialogues.length, 0)}</strong></p>
-          </div>
-
-          <div className="counter-section">
-            <h3>Counter</h3>
-            <div className="counter-display">{counter}</div>
-            <button
-              className="counter-button"
-              onClick={handleCounterClick}
-              onMouseDown={handleCounterMouseDown}
-              onMouseUp={handleCounterMouseUp}
-              onMouseLeave={handleCounterMouseUp}
-            >
-              Click to Increase
-            </button>
-            <p className="counter-hint">Hold for 3 seconds to reset</p>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -18,9 +18,20 @@ body {
   gap: 0;
 }
 
+.left-panel {
+  width: 340px;
+  background-color: #0a0a0a;
+  border-right: 1px solid #1a1a1a;
+  padding: 20px;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
 .app-container {
   flex: 1;
-  max-width: 1200px;
+  max-width: none;
   margin: 0;
   padding: 15px 30px;
   overflow-y: auto;
@@ -232,17 +243,6 @@ h2 {
   color: #ff4444;
 }
 
-.right-panel {
-  width: 340px;
-  background-color: #0a0a0a;
-  border-left: 1px solid #1a1a1a;
-  padding: 20px;
-  overflow-y: auto;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-}
-
 .panel-content h2 {
   color: #ffffff;
   font-size: 1.3em;
@@ -280,39 +280,33 @@ h2 {
   margin-top: 30px;
 }
 
-.counter-display {
-  font-size: 3em;
-  font-weight: 200;
-  color: #ffffff;
-  text-align: center;
-  margin: 20px 0;
-  padding: 20px;
+.counter-button {
+  width: 100%;
+  padding: 0;
   background-color: #000000;
+  color: #ffffff;
   border: 1px solid #222222;
   border-radius: 4px;
-  min-height: 80px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.counter-button {
-  width: 100%;
-  padding: 12px;
-  background-color: #1a1a1a;
+.counter-display {
+  font-size: 3em;
+  font-weight: 200;
   color: #ffffff;
-  border: 1px solid #333333;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.95em;
-  font-weight: 400;
-  transition: all 0.2s ease;
-  user-select: none;
+  text-align: center;
+  padding: 30px 20px;
+  width: 100%;
 }
 
 .counter-button:hover {
-  background-color: #2a2a2a;
-  border-color: #555555;
+  background-color: #1a1a1a;
+  border-color: #333333;
 }
 
 .counter-button:active {
@@ -320,10 +314,44 @@ h2 {
   transform: scale(0.98);
 }
 
-.counter-hint {
-  color: #555555;
-  font-size: 0.8em;
-  text-align: center;
-  margin-top: 10px;
-  font-style: italic;
+.script-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.script-header h2 {
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+.script-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab-button {
+  padding: 8px 16px;
+  background-color: #1a1a1a;
+  color: #888888;
+  border: 1px solid #333333;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: 400;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  background-color: #2a2a2a;
+  color: #c9c9c9;
+}
+
+.tab-button.active {
+  background-color: #c9c9c9;
+  color: #000000;
+  border-color: #c9c9c9;
+  font-weight: 500;
 }
