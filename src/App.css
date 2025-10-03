@@ -1,0 +1,329 @@
+/* --- Estilos Globais --- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #000000;
+  color: #c9c9c9;
+  min-height: 100vh;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  gap: 0;
+}
+
+.app-container {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0;
+  padding: 15px 30px;
+  overflow-y: auto;
+}
+
+h1 {
+  color: #ffffff;
+  text-align: center;
+  font-size: 2.2em;
+  font-weight: 200;
+  letter-spacing: 2px;
+  margin-bottom: 25px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #222222;
+}
+
+h2 {
+  color: #c9c9c9;
+  font-weight: 300;
+  font-size: 1.4em;
+  border-bottom: 1px solid #222222;
+  padding-bottom: 4px;
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+/* Botão de adicionar cena */
+.add-scene-button {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 15px;
+  background-color: #0d0d0d;
+  color: #ffffff;
+  border: 1px solid #333333;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 1.4em;
+  font-weight: 300;
+}
+
+.add-scene-button:hover {
+  background-color: #222222;
+  border-color: #666666;
+}
+
+/* Cena */
+.scene-box {
+  background-color: #0d0d0d;
+  border: 1px solid #222222;
+  border-radius: 3px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.scene-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.scene-index {
+  font-weight: 300;
+  color: #666666;
+  font-size: 1em;
+  width: 20px;
+}
+
+.scene-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.scene-action-input {
+  min-height: 40px;
+  padding: 4px;
+  border: 1px solid #1a1a1a;
+  border-radius: 2px;
+  background-color: #000000;
+  color: #ffffff;
+  margin-bottom: 8px;
+  width: 100%;
+  resize: vertical;
+}
+
+.dialogue-box {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding: 6px;
+  border: 1px solid #1a1a1a;
+  border-radius: 3px;
+  align-items: flex-start;
+}
+
+.dialogue-inputs-compact {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dialogue-character-input {
+  width: 150px;
+  padding: 2px 4px;
+  font-weight: 500;
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid #222222;
+  border-radius: 2px;
+  font-size: 0.85em;
+}
+
+.dialogue-line-input-compact {
+  width: 100%;
+  min-height: 30px;
+  padding: 2px 4px;
+  background-color: #0d0d0d;
+  color: #ffffff;
+  border: 1px solid #222222;
+  border-radius: 2px;
+  font-size: 0.9em;
+  resize: vertical;
+}
+
+.add-dialogue-button,
+.delete-dialogue-button {
+  padding: 4px 6px;
+  border: 1px solid #333333;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 0.8em;
+  background-color: #222222;
+  color: #c9c9c9;
+}
+
+.delete-dialogue-button {
+  height: 20px;
+  width: 20px;
+  line-height: 1;
+  background-color: #0d0d0d;
+  color: #444444;
+  border: 1px solid transparent;
+}
+
+.delete-button {
+  background-color: transparent;
+  color: #444444;
+  border: 1px solid transparent;
+  font-size: 1em;
+  padding: 0 4px;
+}
+
+.full-script-container {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #0d0d0d;
+  border: 1px solid #222222;
+  border-radius: 3px;
+}
+
+.full-script-textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #333333;
+  border-radius: 3px;
+  background-color: #000000;
+  color: #ffffff;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.9em;
+  line-height: 1.3;
+}
+
+.copy-button {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background-color: #c9c9c9;
+  color: #000000;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.copy-button:hover {
+  background-color: #e0e0e0;
+}
+
+.voice-button {
+  padding: 6px 12px;
+  background-color: #0d0d0d;
+  border: 1px solid #333333;
+  border-radius: 3px;
+  color: #c9c9c9;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+
+.voice-button:hover {
+  background-color: #1a1a1a;
+}
+
+.voice-button.recording {
+  background-color: #2a0a0a;
+  border-color: #ff0000;
+  color: #ff4444;
+}
+
+.right-panel {
+  width: 340px;
+  background-color: #0a0a0a;
+  border-left: 1px solid #1a1a1a;
+  padding: 20px;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.panel-content h2 {
+  color: #ffffff;
+  font-size: 1.3em;
+  font-weight: 300;
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #222222;
+}
+
+.panel-content h3 {
+  color: #c9c9c9;
+  font-size: 1em;
+  font-weight: 400;
+  margin-bottom: 15px;
+}
+
+.info-section {
+  margin-bottom: 35px;
+}
+
+.info-section p {
+  color: #888888;
+  font-size: 0.95em;
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+.info-section strong {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.counter-section {
+  margin-top: 30px;
+}
+
+.counter-display {
+  font-size: 3em;
+  font-weight: 200;
+  color: #ffffff;
+  text-align: center;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #000000;
+  border: 1px solid #222222;
+  border-radius: 4px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.counter-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  border: 1px solid #333333;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95em;
+  font-weight: 400;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.counter-button:hover {
+  background-color: #2a2a2a;
+  border-color: #555555;
+}
+
+.counter-button:active {
+  background-color: #0d0d0d;
+  transform: scale(0.98);
+}
+
+.counter-hint {
+  color: #555555;
+  font-size: 0.8em;
+  text-align: center;
+  margin-top: 10px;
+  font-style: italic;
+}
