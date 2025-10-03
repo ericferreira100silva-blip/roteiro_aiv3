@@ -139,7 +139,7 @@ const SceneBox: React.FC<SceneBoxProps> = ({
 // --- Componente Principal ---
 const App: React.FC = () => {
   const [scenes, setScenes] = useState<Scene[]>([]);
-  const [counter, setCounter] = useState<number>(1);
+  const [counter, setCounter] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'full' | 'scenes' | 'dialogues'>('full');
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState<boolean>(false);
   const [translatedDialogues, setTranslatedDialogues] = useState<string>('');
@@ -388,8 +388,15 @@ const App: React.FC = () => {
     isHoldingRef.current = false;
     holdTimerRef.current = setTimeout(() => {
       isHoldingRef.current = true;
-      setCounter(1);
+      setCounter(0);
     }, 3000);
+  };
+
+  const handleCounterClick = () => {
+    if (!isHoldingRef.current) {
+      setCounter(prev => prev + 1);
+    }
+    isHoldingRef.current = false;
   };
 
   const handleCounterMouseUp = () => {
@@ -397,12 +404,6 @@ const App: React.FC = () => {
       clearTimeout(holdTimerRef.current);
       holdTimerRef.current = null;
     }
-
-    if (!isHoldingRef.current) {
-      setCounter(prev => prev + 1);
-    }
-
-    isHoldingRef.current = false;
   };
 
   useEffect(() => {
@@ -436,6 +437,7 @@ const App: React.FC = () => {
               <h3>Contador</h3>
               <button
                 className="counter-button"
+                onClick={handleCounterClick}
                 onMouseDown={handleCounterMouseDown}
                 onMouseUp={handleCounterMouseUp}
                 onMouseLeave={handleCounterMouseUp}
