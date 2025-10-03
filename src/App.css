@@ -27,6 +27,37 @@ body {
   position: sticky;
   top: 0;
   height: 100vh;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.left-panel.collapsed {
+  width: 50px;
+  padding: 20px 10px;
+}
+
+.toggle-panel-button {
+  position: absolute;
+  top: 20px;
+  right: 10px;
+  background-color: #1a1a1a;
+  color: #888888;
+  border: 1px solid #333333;
+  border-radius: 3px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.toggle-panel-button:hover {
+  background-color: #2a2a2a;
+  color: #c9c9c9;
 }
 
 .app-container {
@@ -354,4 +385,45 @@ h2 {
   color: #000000;
   border-color: #c9c9c9;
   font-weight: 500;
+}
+
+.dialogue-translation-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.translation-column h3 {
+  color: #c9c9c9;
+  font-size: 1em;
+  font-weight: 400;
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+.translation-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.translate-button {
+  padding: 6px 12px;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  border: 1px solid #333333;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: 400;
+  transition: all 0.2s ease;
+}
+
+.translate-button:hover:not(:disabled) {
+  background-color: #2a2a2a;
+  border-color: #555555;
+}
+
+.translate-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

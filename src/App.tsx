@@ -141,9 +141,13 @@ const App: React.FC = () => {
   const [scenes, setScenes] = useState<Scene[]>([]);
   const [counter, setCounter] = useState<number>(1);
   const [activeTab, setActiveTab] = useState<'full' | 'scenes' | 'dialogues'>('full');
+  const [leftPanelCollapsed, setLeftPanelCollapsed] = useState<boolean>(false);
+  const [translatedDialogues, setTranslatedDialogues] = useState<string>('');
+  const [isTranslating, setIsTranslating] = useState<boolean>(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const activeSceneRef = useRef<string | null>(null);
   const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const isHoldingRef = useRef<boolean>(false);
 
   // 🔹 Carrega cenas do localStorage ao iniciar
   useEffect(() => {
@@ -328,6 +332,30 @@ const App: React.FC = () => {
       .join('');
   };
 
+  const translateToSpanish = async () => {
+    setIsTranslating(true);
+    try {
+      const textToTranslate = formatDialoguesOnly();
+      const response = await fetch('https://api.mymemory.translated.net/get', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `q=${encodeURIComponent(textToTranslate)}&langpair=pt|es`
+      });
+      const data = await response.json();
+
+      if (data.responseData && data.responseData.translatedText) {
+        setTranslatedDialogues(data.responseData.translatedText);
+      } else {
+        alert('Erro ao traduzir');
+      }
+    } catch (error) {
+      console.error('Erro na tradução:', error);
+      alert('Erro ao traduzir');
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
   // Atualiza cenas a partir do texto editado no roteiro final
   const handleFullScriptChange = (text: string) => {
     const lines = text.split('\n');
@@ -356,12 +384,10 @@ const App: React.FC = () => {
     setScenes(newScenes);
   };
 
-  const handleCounterClick = () => {
-    setCounter(prev => prev + 1);
-  };
-
   const handleCounterMouseDown = () => {
+    isHoldingRef.current = false;
     holdTimerRef.current = setTimeout(() => {
+      isHoldingRef.current = true;
       setCounter(1);
     }, 3000);
   };
@@ -370,9 +396,13 @@ const App: React.FC = () => {
     if (holdTimerRef.current) {
       clearTimeout(holdTimerRef.current);
       holdTimerRef.current = null;
-    } else {
-      setCounter(1);
     }
+
+    if (!isHoldingRef.current) {
+      setCounter(prev => prev + 1);
+    }
+
+    isHoldingRef.current = false;
   };
 
   useEffect(() => {
@@ -385,27 +415,36 @@ const App: React.FC = () => {
 
   return (
     <div className="app-layout">
-      <div className="left-panel">
-        <div className="panel-content">
-          <h2>Information</h2>
-          <div className="info-section">
-            <p>Total Scenes: <strong>{scenes.length}</strong></p>
-            <p>Total Dialogues: <strong>{scenes.reduce((sum, scene) => sum + scene.dialogues.length, 0)}</strong></p>
-          </div>
+      <div className={`left-panel ${leftPanelCollapsed ? 'collapsed' : ''}`}>
+        <button
+          className="toggle-panel-button"
+          onClick={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
+          title={leftPanelCollapsed ? 'Expandir' : 'Minimizar'}
+        >
+          {leftPanelCollapsed ? '›' : '‹'}
+        </button>
 
-          <div className="counter-section">
-            <h3>Counter</h3>
-            <button
-              className="counter-button"
-              onClick={handleCounterClick}
-              onMouseDown={handleCounterMouseDown}
-              onMouseUp={handleCounterMouseUp}
-              onMouseLeave={handleCounterMouseUp}
-            >
-              <div className="counter-display">{counter}</div>
-            </button>
+        {!leftPanelCollapsed && (
+          <div className="panel-content">
+            <h2>Informação</h2>
+            <div className="info-section">
+              <p>Cenas: <strong>{scenes.length}</strong></p>
+              <p>Falas: <strong>{scenes.reduce((sum, scene) => sum + scene.dialogues.length, 0)}</strong></p>
+            </div>
+
+            <div className="counter-section">
+              <h3>Contador</h3>
+              <button
+                className="counter-button"
+                onMouseDown={handleCounterMouseDown}
+                onMouseUp={handleCounterMouseUp}
+                onMouseLeave={handleCounterMouseUp}
+              >
+                <div className="counter-display">{counter}</div>
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="app-container">
@@ -446,13 +485,13 @@ const App: React.FC = () => {
                 className={`tab-button ${activeTab === 'scenes' ? 'active' : ''}`}
                 onClick={() => setActiveTab('scenes')}
               >
-                Apenas Cenas
+                Cenas
               </button>
               <button
                 className={`tab-button ${activeTab === 'dialogues' ? 'active' : ''}`}
                 onClick={() => setActiveTab('dialogues')}
               >
-                Apenas Falas
+                Falas
               </button>
             </div>
           </div>
@@ -487,15 +526,45 @@ const App: React.FC = () => {
 
           {activeTab === 'dialogues' && (
             <>
-              <textarea
-                className="full-script-textarea"
-                value={formatDialoguesOnly()}
-                rows={20}
-                readOnly
-              />
-              <button className="copy-button" onClick={() => navigator.clipboard.writeText(formatDialoguesOnly())}>
-                Copiar
-              </button>
+              <div className="dialogue-translation-section">
+                <div className="translation-column">
+                  <h3>Português</h3>
+                  <textarea
+                    className="full-script-textarea"
+                    value={formatDialoguesOnly()}
+                    rows={20}
+                    readOnly
+                  />
+                  <button className="copy-button" onClick={() => navigator.clipboard.writeText(formatDialoguesOnly())}>
+                    Copiar
+                  </button>
+                </div>
+
+                <div className="translation-column">
+                  <h3>Espanhol</h3>
+                  <textarea
+                    className="full-script-textarea"
+                    value={translatedDialogues}
+                    rows={20}
+                    readOnly
+                    placeholder="Clique em 'Traduzir' para gerar a versão em espanhol"
+                  />
+                  <div className="translation-buttons">
+                    <button
+                      className="translate-button"
+                      onClick={translateToSpanish}
+                      disabled={isTranslating || scenes.length === 0}
+                    >
+                      {isTranslating ? 'Traduzindo...' : 'Traduzir'}
+                    </button>
+                    {translatedDialogues && (
+                      <button className="copy-button" onClick={() => navigator.clipboard.writeText(translatedDialogues)}>
+                        Copiar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
             </>
           )}
         </div>
